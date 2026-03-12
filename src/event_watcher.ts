@@ -1,6 +1,7 @@
 import { parentPort, workerData } from "worker_threads";
 import bindings from 'bindings';
 import { dn } from './dirname.js';
+import { appendFileSync } from 'node:fs';
 
 const DEBUG = process.env.ONOFF_DEBUG === '1';
 let eventCount = 0;
@@ -30,13 +31,19 @@ function watchForEvent() {
     while (true) {
         setTimeout(() => { }, 0);
         const status = gpiod.waitForEvent(line);
-        console.log(status)
+        console.warn('[onoff:worker] status=', status)
         if (status < 0) {
             throw new Error('Interrupt watcher failed');
         }
         if (status === 1) {
+            try {
+                appendFileSync(
+                    '/tmp/onoff-worker-events.log',
+                    `${Date.now()} ${eventCount}\n`
+                );
+            } catch { }
             eventCount += 1;
-            if (DEBUG) {
+            if (true || DEBUG) {
                 const mem = process.memoryUsage();
                 console.warn('[onoff:worker] events=', eventCount, 'heapMB=', Math.round(mem.heapUsed / 1024 / 1024), 'rssMB=', Math.round(mem.rss / 1024 / 1024));
             }
