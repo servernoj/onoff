@@ -30,6 +30,7 @@ function watchForEvent() {
     while (true) {
         setTimeout(() => { }, 0);
         const status = gpiod.waitForEvent(line);
+        console.log(status)
         if (status < 0) {
             throw new Error('Interrupt watcher failed');
         }
@@ -37,9 +38,7 @@ function watchForEvent() {
             eventCount += 1;
             if (DEBUG) {
                 const mem = process.memoryUsage();
-                if (eventCount % MEM_LOG_INTERVAL === 0) {
-                    console.warn('[onoff:worker] events=', eventCount, 'heapMB=', Math.round(mem.heapUsed / 1024 / 1024), 'rssMB=', Math.round(mem.rss / 1024 / 1024));
-                }
+                console.warn('[onoff:worker] events=', eventCount, 'heapMB=', Math.round(mem.heapUsed / 1024 / 1024), 'rssMB=', Math.round(mem.rss / 1024 / 1024));
             }
             const value = gpiod.getLineValue(line);
             parentPort?.postMessage(value);
