@@ -179,7 +179,6 @@ export class Gpio {
             this._worker.on('error', (err) => {
                 console.error('[onoff] Worker error:', err.message || err);
             });
-            console.warn('[onoff] startInterruptHandler: Worker started', { gpio: this._gpio });
             const interrupts = fromEvent(this._worker, 'message');
             this._interruptSubscription = interrupts.pipe(
                 debounceTime(this._options.debounceTimeout)
@@ -192,7 +191,6 @@ export class Gpio {
     }
 
     private stopInterruptHandler(): void {
-        console.warn('[onoff] stopInterruptHandler: unwatch/terminate', { gpio: this._gpio });
         if (this._interruptSubscription) {
             this._interruptSubscription.unsubscribe();
             this._interruptSubscription = undefined;
