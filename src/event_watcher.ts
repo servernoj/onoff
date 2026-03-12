@@ -4,7 +4,7 @@ import { dn } from './dirname.js';
 
 const DEBUG = process.env.ONOFF_DEBUG === '1';
 let eventCount = 0;
-const MEM_LOG_INTERVAL = 500;  // log memory every N events
+const MEM_LOG_INTERVAL = 4;  // log memory every N events
 
 const gpiod = bindings({ bindings: 'gpiod-wrap', module_root: `${dn}/../..` });
 
