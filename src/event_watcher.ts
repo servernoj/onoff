@@ -30,15 +30,14 @@ function watchForEvent() {
     while (true) {
         setTimeout(() => { }, 0);
         const status = gpiod.waitForEvent(line);
-        console.warn('[onoff:worker] status=', status)
         if (status < 0) {
             throw new Error('Interrupt watcher failed');
         }
         if (status === 1) {
             if (DEBUG) {
-                const mem = process.memoryUsage();
                 try {
-                    const log = `[onoff:worker] events=${eventCount}, heapMB=${Math.round(mem.heapUsed / 1024 / 1024)}, rssMB=${Math.round(mem.rss / 1024 / 1024)}`
+                    const mem = process.memoryUsage();
+                    const log = `[onoff:worker] events=${eventCount}, heapMB=${Math.round(mem.heapUsed / 1024 / 1024)}, rssMB=${Math.round(mem.rss / 1024 / 1024)}, externalMB=${Math.round((mem.external || 0) / 1024 / 1024)}`;
                     appendFileSync(
                         '/tmp/onoff-worker-events.log',
                         `${Date.now()}: ${log}\n`
